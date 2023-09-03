@@ -1,63 +1,39 @@
 #include "objectDetection.h"
 
-#include <opencv2/opencv.hpp>
-
-#include <iostream>
-#include <vector>
-
-using namespace cv;
-using namespace od;
-
 int main()
 {
-    bool runOnGPU = true;
+    // ƒалее приводитс€ пример использовани€
+    // класса ObjectDetection дл€ распознавани€
+    // образов
 
-    ObjectDetection od("../models/coco.names", "../models/yolov8s.onnx", cv::Size(640, 480), runOnGPU);
+    //  онфигурационные константы
+    constexpr bool runOnGPU         { true };
+    constexpr bool showFPS          { true };
+    constexpr bool showDetectTime   { true };
 
-    std::vector<std::string> imageNames;
-    imageNames.push_back("../sample_res/sample_pic3.jpg");
+    // »нициализаци€ объекта ObjectDetection,
+    // в ходе которой загружаютс€ классы и сеть
+    // по указанным пут€м.
+    // 
+    // cv::Size(640, 480) - размерность модели;
+    // индивидуальна дл€ разных сетей
+    od::ObjectDetection od{ "../models/coco.names", "../models/yolov8s.onnx",
+                            cv::Size(640, 480), runOnGPU };
 
-    cv::VideoCapture cap("../sample_res/sample_vid.mp4");
-    //cv::VideoCapture cap(1);
-    cv::Mat frame;
+    // –аспознать образы можно как в видео-файле
+    cv::VideoCapture inputVid{ "../sample_res/sample_vid.mp4" };
 
-    //for (auto& img : imageNames)
-    while (cap.read(frame))
-    {
-        //frame = cv::imread(img);
+    // так и на изображени€х
+    cv::VideoCapture inputPic{ "../sample_res/sample_pic3.jpg" };
 
-        // Inference starts here
-        auto startTime = getTickCount();
+    // так и в реальном времени, использу€,
+    // например, веб-камеру устройства
+    // (указываетс€ индекс устройства)
+    cv::VideoCapture inputWebcam{ 1 };
 
-        od.detect(frame);
-
-        // Inference ends here...
-        auto endTime = getTickCount();
-        auto timeElapsed = (endTime - startTime) / getTickFrequency();
-
-        // Put efficiency information.
-        std::vector<double> layersTimes;
-        double freq = getTickFrequency() / 1000;
-        double t = od.getNet().getPerfProfile(layersTimes) / freq;
-        std::string labelTime = format("Inference time: %.2f ms", t);
-        std::string labelFps = "FPS: " + std::to_string(int(1 / timeElapsed));
-        cv::putText(frame, labelTime, Point(0, 15), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
-        cv::putText(frame, labelFps, Point(0, 45), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0));
-
-
-        // This is only for preview purposes
-        float scale = 0.8;
-        cv::resize(frame, frame, cv::Size(frame.cols * scale, frame.rows * scale));
-        cv::imshow("Inference", frame);
-
-        char c = cv::waitKey(1);
-        if (c == 113 || c == 27) //'q' or ESC
-        {
-            cap.release();
-            cv::destroyAllWindows();
-            break;
-        }
-    }
+    // Ќепосредственно сам процесс распознавани€.
+    // ѕринудительно завершить можно хотке€ми q/ESC
+    od.run(inputPic, showDetectTime, showFPS);
 
     return 0;
 }

@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <random>
 
 namespace od
@@ -169,6 +168,62 @@ namespace od
             drawLabel(modelInput, detection);
     }
 
+    void ObjectDetection::run(cv::VideoCapture& cap, bool showTimeProfile, bool showFPS)
+    {
+        // Profile-related переменные
+        static cv::int64_t startTime{};
+        static cv::int64_t endTime{};
+        static const auto profileTextColor{ cv::Scalar(0, 0, 255) };
+        static constexpr auto profileFontFace{ cv::FONT_HERSHEY_SIMPLEX };
+
+        cv::Mat frame{};
+        while (cap.read(frame))
+        {
+            if (showFPS)
+                startTime = cv::getTickCount();
+
+            detect(frame);
+
+            if (showTimeProfile)
+            {
+                // ¬ектор дл€ хранени€ таймингов по сло€м
+                // (на данный момент используетс€ только общее врем€)
+                std::vector<double> timings{}; 
+
+                double freq{ cv::getTickFrequency() / 1000 };
+                double time{ m_net.getPerfProfile(timings) / freq };
+
+                std::string label{ cv::format("Detection took: %.2f ms", time) };
+                cv::putText(frame, label, cv::Point(0, 15), profileFontFace, 0.5, profileTextColor);
+            }
+
+            if (showFPS)
+            {
+                endTime = cv::getTickCount();
+                auto timeElapsed{ (endTime - startTime) / cv::getTickFrequency() };
+
+                std::string labelFps{ "FPS: " + std::to_string(int(1 / timeElapsed)) };
+                cv::putText(frame, labelFps, cv::Point(0, 35), profileFontFace, 0.5, profileTextColor);
+            }
+
+            // –ескейл дл€ удобства просмотра 
+            float scale{ 0.85 };
+            cv::resize(frame, frame, cv::Size(frame.cols * scale, frame.rows * scale));
+
+            cv::imshow("Object Detection", frame);
+
+            char c = cv::waitKey(1);
+            if (c == 113 || c == 27) //'q' or ESC
+            {
+                cap.release();
+                cv::destroyAllWindows();
+                break;
+            }
+        }
+
+        cv::waitKey(-1);
+    }
+
     void ObjectDetection::loadClassesFromFile()
     {
         std::ifstream inputFile{ m_classesPath };
@@ -180,10 +235,16 @@ namespace od
 
             inputFile.close();
         }
+        else
+            CV_Error(cv::Error::StsError, "File " + m_classesPath + " with classes not found");
     }
 
     void ObjectDetection::loadNet()
     {
+        // Ќа данный момент не выполн€етс€ 
+        // обработка исключени€, выбрасываемого OpenCV,
+        // когда модель не может быть прочитана
+        // (например, в случае передачи некорреткного пути)
         m_net = cv::dnn::readNet(m_modelPath);
 
         std::cout << "\nCUDA: ";

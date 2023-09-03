@@ -29,11 +29,11 @@ namespace od
     class ObjectDetection
     {
     public:
-        ObjectDetection(std::string_view classesPath, std::string_view modelPath, 
+        ObjectDetection(std::string_view classesPath, std::string_view modelPath,
                         const cv::Size& modelInputShape = { 640, 640 },  bool runWithCuda = false);
 
+        void run(cv::VideoCapture& cap, bool showTimeProfile = false, bool showFPS = false);
         void detect(const cv::Mat& input);
-        cv::dnn::Net& getNet(){ return m_net; } //@Debug
 
     private:
         void loadClassesFromFile();
