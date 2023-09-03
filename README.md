@@ -1,5 +1,5 @@
 # object_detection_opencv
-The goal of this project is to get the basic understanding about object detection using OpenCV library with pretrained neural network.
+The goal of this project is to get the basic understanding about object detection using OpenCV library with the pretrained neural network.
 Implementation of object detection for now relies only on YOLOv8 model hence other models probably won't work correctly.
 
 CUDA and cuDNN were used to drastically improve performance when using detection in real-time or for video captures. 
@@ -11,7 +11,6 @@ In theory, object_detection should correctly run with OpenCV v4 and newer, but t
 C++ Standard - >=17<br>
 CMake - >=3.5<br>
 OpenCV - 4.7.0<br>
-Neural Network Models - YOLOv8<br>
 CUDA (optional) - 11.4<br>
 cuDNN (optional) - 8.9.2.26<br>
 
