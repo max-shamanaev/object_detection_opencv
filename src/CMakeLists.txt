@@ -12,7 +12,6 @@ set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 # !CUDA
 
 # OpenCV
-set(OpenCV_DIR "F:/Study/C++/opencv_playground/opencv470")
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 link_directories(${OpenCV_LIB_DIR})
