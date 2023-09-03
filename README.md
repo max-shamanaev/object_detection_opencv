@@ -9,7 +9,7 @@ Project was tested only with below-mentioned versions of dependencies with OpenC
 In theory, object_detection should correctly run with OpenCV v4 and newer, but there were problems building OpenCV 4.8.0 with CUDA so downgrade was made.
 
 C++ Standard - >=17<br>
-CMake - >=3.5
+CMake - >=3.5<br>
 OpenCV - 4.7.0<br>
 Neural Network Models - YOLOv8<br>
 CUDA (optional) - 11.4<br>
