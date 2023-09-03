@@ -33,7 +33,7 @@ int main()
 
     // Непосредственно сам процесс распознавания.
     // Принудительно завершить можно хоткеями q/ESC
-    od.run(inputPic, showDetectTime, showFPS);
+    od.run(inputVid, showDetectTime, showFPS);
 
     return 0;
 }
