@@ -194,7 +194,7 @@ namespace od
                 double time{ m_net.getPerfProfile(timings) / freq };
 
                 std::string label{ cv::format("Detection took: %.2f ms", time) };
-                cv::putText(frame, label, cv::Point(0, 15), profileFontFace, 0.5, profileTextColor);
+                cv::putText(frame, label, cv::Point(0, 15), profileFontFace, 0.6, profileTextColor, 2);
             }
 
             if (showFPS)
@@ -203,11 +203,11 @@ namespace od
                 auto timeElapsed{ (endTime - startTime) / cv::getTickFrequency() };
 
                 std::string labelFps{ "FPS: " + std::to_string(int(1 / timeElapsed)) };
-                cv::putText(frame, labelFps, cv::Point(0, 35), profileFontFace, 0.5, profileTextColor);
+                cv::putText(frame, labelFps, cv::Point(0, 35), profileFontFace, 0.6, profileTextColor, 2);
             }
 
             // Рескейл для удобства просмотра 
-            float scale{ 0.85 };
+            float scale{ 0.8f };
             cv::resize(frame, frame, cv::Size(frame.cols * scale, frame.rows * scale));
 
             cv::imshow("Object Detection", frame);
@@ -221,7 +221,7 @@ namespace od
             }
         }
 
-        cv::waitKey(-1);
+        cv::waitKey();
     }
 
     void ObjectDetection::loadClassesFromFile()
